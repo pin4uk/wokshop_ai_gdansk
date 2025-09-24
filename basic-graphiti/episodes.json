@@ -1,0 +1,70 @@
+[
+  {
+    "content": "Tony Stark, also known as Iron Man, is a genius inventor and billionaire who created the Iron Man suit using advanced arc reactor technology. He was one of the founding members of the Avengers.",
+    "type": "text",
+    "description": "S.H.I.E.L.D. personnel file"
+  },
+  {
+    "content": "The Battle of New York occurred on May 4, 2012, when Loki led the Chitauri invasion through a portal opened above Manhattan. The Avengers assembled for the first time to defend Earth.",
+    "type": "text",
+    "description": "S.H.I.E.L.D. incident report"
+  },
+  {
+    "content": {
+      "name": "Steve Rogers",
+      "codename": "Captain America",
+      "abilities": "Enhanced strength, speed, durability",
+      "weapon": "Vibranium shield",
+      "status": "Active Avenger",
+      "origin": "Super Soldier Serum"
+    },
+    "type": "json",
+    "description": "Avengers database entry"
+  },
+  {
+    "content": {
+      "facility": "Hydra Research Base Alpha",
+      "location": "Eastern Europe",
+      "threat_level": "Omega",
+      "primary_research": "Tesseract energy weapons",
+      "security_status": "Compromised",
+      "last_updated": "2014-03-15"
+    },
+    "type": "json",
+    "description": "S.H.I.E.L.D. intelligence report"
+  },
+  {
+    "content": "Natasha Romanoff, codenamed Black Widow, is a highly trained former Russian spy who defected to S.H.I.E.L.D. She specializes in espionage, infiltration, and hand-to-hand combat.",
+    "type": "text",
+    "description": "Agent personnel record"
+  },
+  {
+    "content": {
+      "name": "Wanda Maximoff",
+      "codename": "Scarlet Witch",
+      "abilities": "Reality manipulation, telekinesis, energy projection",
+      "origin": "Mind Stone experimentation",
+      "status": "Avenger",
+      "threat_assessment": "Class Omega"
+    },
+    "type": "json",
+    "description": "Enhanced individual profile"
+  },
+  {
+    "content": "The Sokovia Accords were established in 2016 to regulate enhanced individuals and their activities following the destruction of Sokovia by Ultron and subsequent civilian casualties in Lagos.",
+    "type": "text",
+    "description": "United Nations documentation"
+  },
+  {
+    "content": {
+      "operation": "Operation: Infiltrate Hydra",
+      "objective": "Retrieve stolen Stark technology",
+      "team_leader": "Steve Rogers",
+      "team_members": ["Natasha Romanoff", "Sam Wilson", "Wanda Maximoff"],
+      "status": "Mission Complete",
+      "threat_neutralized": true
+    },
+    "type": "json",
+    "description": "Mission briefing archive"
+  }
+]
