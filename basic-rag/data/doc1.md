@@ -1,0 +1,1 @@
+The film Deadpool & Wolverine was released on July 26, 2024. In the movie, Deadpool officially enters the Marvel Cinematic Universe and teams up with Wolverine — their dynamic is filled with constant banter, clashing personalities, and brutal fights, but ultimately they work together against a larger threat.
