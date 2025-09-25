@@ -1,8 +1,16 @@
-"""Naive top-k cosine similarity retriever for Phase 1 using Postgres storage.
+"""
+============================================================================
+🔍 RAG RETRIEVER - Same Tech as Step 2, Different Integration!
+============================================================================
 
-This phase demonstrates the core RAG concepts without vector databases:
+Key insight for workshop participants:
+- SAME retrieval technology as basic-rag/
+- But now it's used as an AGENT TOOL, not standalone pipeline
+- This shows how RAG can be integrated into larger AI systems
+
+Technical details (unchanged from Step 2):
 - Manual cosine similarity in Python (no pgvector yet)
-- Postgres stores embeddings as float arrays
+- Postgres stores embeddings as float arrays  
 - Simple linear search through all chunks (no indexing)
 """
 from __future__ import annotations
@@ -23,10 +31,13 @@ load_dotenv()
 EMBED_MODEL = "text-embedding-3-small"
 
 def embed_text(text: str) -> List[float]:
-    """Generate embeddings using OpenAI's API.
+    """
+    🧠 EMBEDDING GENERATION - Same as Step 2
     
-    Workshop note: We use OpenAI directly here to show the embedding step clearly.
-    Later phases will reuse this pattern but add vector database optimizations.
+    Workshop note: This function is IDENTICAL to basic-rag/retriever.py
+    - Shows how you can reuse RAG components in AI agents
+    - Same OpenAI embeddings, same quality
+    - Different integration pattern (tool vs. pipeline)
     """
     key = os.getenv("OPENAI_API_KEY")
     if not key:
@@ -37,11 +48,12 @@ def embed_text(text: str) -> List[float]:
     return response.data[0].embedding
 
 def cosine_similarity(a: List[float], b: List[float]) -> float:
-    """Calculate cosine similarity between two vectors.
+    """
+    📐 SIMILARITY CALCULATION - Core RAG math (unchanged from Step 2)
     
-    Workshop teaching point: This is the core similarity metric for RAG.
-    Later phases will use pgvector's optimized implementation, but here
-    we show the math explicitly for learning.
+    Workshop teaching point: Same similarity logic as basic-rag
+    - Shows consistency across different integration patterns
+    - Math doesn't change, architecture does
     
     Formula: cos(θ) = (a·b) / (|a| × |b|)
     Returns value between -1 and 1 (higher = more similar)

@@ -169,7 +169,7 @@ def main() -> None:
         return
     
     # Single demo question
-    demo_question = "Have Wolverine ever met deadpool?"
+    demo_question = "Have Wolverine and Deadpool ever met?"
     
     print("🎯 Running demo question:")
     answer_question(demo_question)

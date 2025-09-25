@@ -1,14 +1,19 @@
-"""Pydantic AI Agent with Multiple Tools - Superhero Mission Intelligence System.
+"""
+============================================================================
+🦸‍♂️ PYDANTIC AI + RAG INTEGRATION - Step 3 of Workshop
+============================================================================
 
-This demonstrates how to use Pydantic AI agents with multiple tools:
-1. Document retrieval tool (RAG) - for mission intel and threat data
-2. Superhero database tools - for team member capabilities and status
-3. System prompt enhancement - for contextual superhero information
+This demonstrates the EVOLUTION from basic RAG to intelligent AI agents:
+1. 🧠 Pydantic AI Agent with multiple tools
+2. 📚 RAG as an agent tool (not standalone pipeline)
+3. 🗄️ Multiple data sources working together
+4. 📋 Structured outputs from unstructured documents
 
-Key concepts:
+Key learning points:
+- RAG becomes a TOOL that AI can choose to use
 - Multiple tools working together in one agent
 - Context sharing through dependencies
-- Rich superhero-themed use case for mission planning
+- From "dumb" retrieval to "smart" agent decisions
 """
 from __future__ import annotations
 
@@ -22,20 +27,25 @@ from dotenv import load_dotenv
 
 from retriever import retrieve_async
 
+# Load environment variables (API keys, database URLs)
 load_dotenv()
 
-# Hard-coded model for pedagogical clarity
+# Hard-coded model for workshop clarity
 CHAT_MODEL = "gpt-4o-mini"
 
-# Mock Superhero Database - MCU Heroes with Mission-Relevant Data
+# ============================================================================
+# 🗄️ MOCK DATABASE - Enhanced superhero data for complex missions
+# ============================================================================
+# Notice how this is richer than the quickstart - more fields, more context
 @dataclass
 class Superhero:
+    """Enhanced superhero data model for mission planning"""
     id: int
     name: str
-    powers: Dict[str, int]  # Power levels 0-100
-    status: str  # "active", "injured", "unavailable", "on_mission"
-    location: str
-    specialties: List[str]
+    powers: Dict[str, int]  # Power levels 0-100 (more detailed than quickstart)
+    status: str  # "active", "injured", "unavailable", "on_mission" 
+    location: str           # Geographic availability
+    specialties: List[str]  # Mission-relevant skills
 
 SUPERHERO_DB = {
     1: Superhero(
@@ -81,23 +91,40 @@ SUPERHERO_DB = {
 }
 
 class SuperheroDatabase:
-    """Mock database connection for superhero operations."""
+    """
+    🗄️ DATABASE ACCESS LAYER - More sophisticated than quickstart
+    - Multiple query methods (by ID, availability, specialty)
+    - Real-world mission planning scenarios
+    - Async methods for database operations
+    """
     
     async def get_hero_by_id(self, hero_id: int) -> Superhero | None:
+        """Fetch specific hero by ID"""
         return SUPERHERO_DB.get(hero_id)
     
     async def get_available_heroes(self) -> List[Superhero]:
+        """Get only heroes currently available for missions"""
         return [hero for hero in SUPERHERO_DB.values() if hero.status == "active"]
     
     async def get_heroes_by_specialty(self, specialty: str) -> List[Superhero]:
+        """Find heroes with specific combat/mission specialties"""
         return [hero for hero in SUPERHERO_DB.values() 
                 if specialty.lower() in [s.lower() for s in hero.specialties]]
 
+# ============================================================================
+# 🔑 AGENT DEPENDENCIES - More Complex Than Quickstart
+# ============================================================================
+
 @dataclass 
 class MissionIntelDependencies:
-    """Dependencies for the Superhero Mission Intelligence agent.
+    """
+    🔑 ENHANCED DEPENDENCIES: Multiple data sources for the agent
+    - Mission context (ID, clearance level)
+    - Database connections 
+    - Security/access control
     
-    Includes both database access and mission context.
+    Compare to quickstart: just superhero_id + db connection
+    Here: mission planning requires MORE context!
     """
     mission_id: str = "MISSION_001"
     clearance_level: int = 5  # 1-10, affects what intel can be accessed
@@ -108,23 +135,42 @@ class MissionIntelDependencies:
             self.superhero_db = SuperheroDatabase()
 
 
+# ============================================================================
+# 📋 STRUCTURED DATA MODELS - Multiple output types for different tools
+# ============================================================================
+
 class RetrievalResult(BaseModel):
-    """Structured result from retrieval tool."""
+    """
+    📋 RAG TOOL OUTPUT: Structured results from document retrieval
+    - Not just raw text - includes similarity scores!
+    - Security clearance levels
+    - Pydantic validation ensures clean data
+    """
     similarity_score: float = Field(description="Cosine similarity score")
     content: str = Field(description="Retrieved text content")
 
 class SuperheroInfo(BaseModel):
-    """Structured superhero information."""
+    """
+    📋 HERO TOOL OUTPUT: Structured superhero information
+    - More detailed than quickstart's simple data
+    - Mission-relevant fields (status, location, specialties)
+    - Type-safe access to complex hero data
+    """
     name: str = Field(description="Superhero name")
     powers: Dict[str, int] = Field(description="Power levels (0-100)")
     status: str = Field(description="Current operational status")
     location: str = Field(description="Current location")
     specialties: List[str] = Field(description="Areas of expertise")
 
-# Create the agent
+# ============================================================================
+# 🤖 THE AI AGENT - Now with MULTIPLE TOOLS!
+# ============================================================================
+
 mission_intel_agent = Agent(
     f"openai:{CHAT_MODEL}",
-    deps_type=MissionIntelDependencies,
+    deps_type=MissionIntelDependencies,    # More complex dependencies
+    # NO output_type here - let the agent return natural language responses
+    # (Each TOOL has structured output, but the agent's final response is flexible)
     system_prompt=(
         "You are FRIDAY, the advanced AI assistant for the Avengers. "
         "You help with mission planning by analyzing intelligence reports and superhero capabilities. "
@@ -137,10 +183,23 @@ mission_intel_agent = Agent(
 )
 
 
+# ============================================================================
+# 🧠 DYNAMIC SYSTEM PROMPT - Mission-aware context
+# ============================================================================
+
 @mission_intel_agent.system_prompt
 async def add_mission_context(ctx: RunContext[MissionIntelDependencies]) -> str:
-    """Add mission context to the system prompt."""
+    """
+    🧠 DYNAMIC CONTEXT: Add mission-specific information to prompt
+    - Mission ID and clearance level change per conversation
+    - Makes the agent aware of security constraints
+    - Compare to quickstart: just superhero name vs. mission context
+    """
     return f"Current mission: {ctx.deps.mission_id} | Clearance Level: {ctx.deps.clearance_level}/10"
+
+# ============================================================================
+# 🛠️ AGENT TOOLS - Multiple tools working together
+# ============================================================================
 
 @mission_intel_agent.tool
 async def retrieve_mission_intel(
@@ -148,16 +207,23 @@ async def retrieve_mission_intel(
     query: str,
     k: int = 3
 ) -> List[RetrievalResult]:
-    """Retrieve classified mission intelligence and threat data from secure documents.
+    """
+    🛠️ RAG TOOL: This is where RAG becomes an AGENT TOOL!
+    
+    Key difference from basic-rag:
+    - RAG is no longer the main pipeline
+    - It's a tool the agent can CHOOSE to use
+    - Returns structured data (RetrievalResult), not raw text
+    - Agent decides WHEN to retrieve documents based on the conversation
     
     Args:
-        query: Intelligence query (e.g. "Hydra bases", "alien technology", "villain capabilities") 
+        query: Intelligence query (e.g. "Hydra bases", "alien technology") 
         k: Number of top classified reports to return (1-5)
         
     Returns:
-        List of intelligence chunks with security ratings and content
+        Structured intelligence with security clearance context
     """
-    # Use the existing retriever from basic-rag
+    # Use the existing retriever from basic-rag (same tech, different integration!)
     raw_results = await retrieve_async(query, k)
     
     # Convert to structured results with mission context
@@ -174,7 +240,13 @@ async def retrieve_mission_intel(
 async def get_available_heroes(
     ctx: RunContext[MissionIntelDependencies]
 ) -> List[SuperheroInfo]:
-    """Get list of all currently available superheroes for mission deployment.
+    """
+    🛠️ HERO DATABASE TOOL: Access live superhero availability
+    
+    Demonstrates:
+    - Multiple data sources (documents + database)
+    - Real-time data access through dependencies
+    - Structured output for complex queries
     
     Returns:
         List of active heroes with their current capabilities and status
@@ -194,17 +266,21 @@ async def get_heroes_by_specialty(
     ctx: RunContext[MissionIntelDependencies],
     specialty: str
 ) -> List[SuperheroInfo]:
-    """Find heroes with specific combat specialties or capabilities.
+    """
+    🛠️ SPECIALIST SEARCH TOOL: Find heroes with specific capabilities
     
-    Shows ALL heroes with the specialty, regardless of availability status.
-    Use this when intel mentions specific requirements like "divine powers", "mystical abilities", 
-    "supernatural", "technology", "heavy combat", etc.
+    Key insight: The AI agent can now REASON about which tool to use:
+    - Need general availability? Use get_available_heroes()
+    - Need specific skills? Use this tool
+    - Need threat intel? Use retrieve_mission_intel()
+    
+    The agent chooses the RIGHT tool for the situation!
     
     Args:
-        specialty: Required specialty (e.g. "divine_magic", "technology", "stealth", "heavy_combat", "leadership")
+        specialty: Required specialty (e.g. "divine_magic", "technology", "stealth")
         
     Returns:
-        List of ALL heroes who specialize in the requested area (available and unavailable)
+        List of ALL heroes who specialize in the requested area
     """
     specialist_heroes = await ctx.deps.superhero_db.get_heroes_by_specialty(specialty)
     
@@ -234,11 +310,25 @@ async def plan_mission(question: str, mission_id: str = "AVENGERS_001") -> str:
 
 
 async def main() -> None:
-    """Demonstrate the FRIDAY Mission Intelligence System with multiple tools."""
+    # ========================================================================
+    # 🚀 DEMONSTRATION - Evolution from basic RAG to intelligent agent
+    # ========================================================================
+    """
+    Shows the key difference between Step 2 (basic RAG) and Step 3 (Pydantic + RAG):
+    
+    Step 2: Human asks question → RAG retrieves → LLM generates answer
+    Step 3: Human asks question → AI AGENT decides which tools to use → Structured response
+    
+    The agent can now:
+    - Choose when to retrieve documents vs. query database
+    - Combine multiple data sources intelligently  
+    - Return structured, actionable intelligence
+    """
     
     print("🚀 FRIDAY - AVENGERS MISSION INTELLIGENCE SYSTEM")
     print("=" * 80)
-    print("🤖 Multi-Tool Pydantic AI Agent: Document Retrieval + Superhero Database")
+    print("� EVOLUTION: From Basic RAG → Intelligent Multi-Tool Agent")
+    print("📊 RAG + Database + Structured Reasoning")
     print("=" * 80)
     print()
     

@@ -67,6 +67,7 @@ class SuperheroAnalysisOutput(BaseModel):
     """
     📋 STRUCTURED OUTPUT: Defines exactly what the AI must return
     - Pydantic model ensures type safety and validation
+    - Acts as a contract between your AI agent and your application code
     - AI cannot return malformed data - it's validated automatically!
     """
     response_text: str = Field(description="Analysis of the superhero's situation")
