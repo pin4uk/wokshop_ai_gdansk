@@ -1,0 +1,7 @@
+.env
+pydantic-ai-rag/requirements.txt
+basic-rag/__pycache__/retriever.cpython-313.pyc
+basic-rag/__pycache__/db.cpython-313.pyc
+pydantic-ai-rag/__pycache__/agent_rag.cpython-313.pyc
+pydantic-ai-rag/__pycache__/retriever.cpython-313.pyc
+pydantic-ai-rag/__pycache__/db.cpython-313.pyc
